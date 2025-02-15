@@ -1,0 +1,46 @@
+{
+  "name": "vscodium-claude",
+  "displayName": "Claude AI Assistant",
+  "description": "Integrate Claude AI assistant into VSCodium",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:vscodium-claude.askClaude"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscodium-claude.askClaude",
+        "title": "Ask Claude"
+      }
+    ],
+    "configuration": {
+      "title": "Claude AI Assistant",
+      "properties": {
+        "claudeAI.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for Claude AI"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.14.1"
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.3.3"
+  }
+}
