@@ -1,92 +1,70 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.activate = activate;
 // src/extension.ts
-import * as vscode from "vscode";
-import Anthropic from "@anthropic-ai/sdk";
-
-export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand(
-    "vscodium-claude.askClaude",
-    async () => {
-      // Get API key from configuration
-      const config = vscode.workspace.getConfiguration("claudeAI");
-      const apiKey = config.get<string>("apiKey");
-
-      if (!apiKey) {
-        vscode.window.showErrorMessage(
-          "Please set your Claude API key in settings"
-        );
-        return;
-      }
-
-      // Create Anthropic client
-      const anthropic = new Anthropic({
-        apiKey: apiKey,
-      });
-
-      // Get selected text or current file content
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) {
-        vscode.window.showInformationMessage("No editor is active");
-        return;
-      }
-
-      const selection = editor.selection;
-      const text = editor.document.getText(
-        selection.isEmpty ? undefined : selection
-      );
-
-      // Create webview panel for chat
-      const panel = vscode.window.createWebviewPanel(
-        "claudeChat",
-        "Chat with Claude",
-        vscode.ViewColumn.Beside,
-        {
-          enableScripts: true,
+const vscode = require("vscode");
+const sdk_1 = require("@anthropic-ai/sdk");
+function activate(context) {
+    let disposable = vscode.commands.registerCommand("vscodium-claude.askClaude", async () => {
+        // Get API key from configuration
+        const config = vscode.workspace.getConfiguration("claudeAI");
+        const apiKey = config.get("apiKey");
+        if (!apiKey) {
+            vscode.window.showErrorMessage("Please set your Claude API key in settings");
+            return;
         }
-      );
-
-      // Initialize chat interface
-      panel.webview.html = getChatHtml();
-
-      // Handle messages from webview
-      panel.webview.onDidReceiveMessage(async (message) => {
-        switch (message.command) {
-          case "sendMessage":
-            try {
-              const response = await anthropic.messages.create({
-                model: "claude-3-opus-20240229",
-                max_tokens: 1000,
-                messages: [
-                  {
-                    role: "user",
-                    content: message.text,
-                  },
-                ],
-                system:
-                  "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.",
-              });
-
-              // Send response back to webview
-              panel.webview.postMessage({
-                command: "receiveMessage",
-                text: response.content[0].text,
-              });
-            } catch (error) {
-              vscode.window.showErrorMessage(
-                "Error communicating with Claude: " + error
-              );
+        // Create Anthropic client
+        const anthropic = new sdk_1.default({
+            apiKey: apiKey,
+        });
+        // Get selected text or current file content
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage("No editor is active");
+            return;
+        }
+        const selection = editor.selection;
+        const text = editor.document.getText(selection.isEmpty ? undefined : selection);
+        // Create webview panel for chat
+        const panel = vscode.window.createWebviewPanel("claudeChat", "Chat with Claude", vscode.ViewColumn.Beside, {
+            enableScripts: true,
+        });
+        // Initialize chat interface
+        panel.webview.html = getChatHtml();
+        // Handle messages from webview
+        panel.webview.onDidReceiveMessage(async (message) => {
+            switch (message.command) {
+                case "sendMessage":
+                    try {
+                        const response = await anthropic.messages.create({
+                            model: "claude-3-opus-20240229",
+                            max_tokens: 1000,
+                            messages: [
+                                {
+                                    role: "user",
+                                    content: message.text,
+                                },
+                            ],
+                            system: "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.",
+                        });
+                        // Send response back to webview
+                        panel.webview.postMessage({
+                            command: "receiveMessage",
+                            text: response.content[0].text,
+                        });
+                    }
+                    catch (error) {
+                        vscode.window.showErrorMessage("Error communicating with Claude: " + error);
+                    }
+                    break;
             }
-            break;
-        }
-      });
-    }
-  );
-
-  context.subscriptions.push(disposable);
+        });
+    });
+    context.subscriptions.push(disposable);
 }
-
-function getChatHtml(): string {
-  // Using a template literal for the entire HTML structure
-  return `
+function getChatHtml() {
+    // Using a template literal for the entire HTML structure
+    return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -312,3 +290,4 @@ function getChatHtml(): string {
       </html>
   `;
 }
+//# sourceMappingURL=extension.js.map
