@@ -133,7 +133,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable);
 }
 
-// Add to the end of getWebviewContent function:
 function getWebviewContent(
   webview: vscode.Webview,
   styleUri: vscode.Uri,
@@ -145,7 +144,7 @@ function getWebviewContent(
 
   return `<!DOCTYPE html>
     <html lang="en">
-    <head>
+      <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
@@ -153,43 +152,60 @@ function getWebviewContent(
         } 'unsafe-inline'; script-src 'nonce-${nonce}';">
         <link href="${styleUri}" rel="stylesheet">
         <title>Chat with Claude</title>
-    </head>
-    <body>
-        <div id="app">
-            <nav class="chat-nav">
-                <div class="nav-title">Claude Chats</div>
-                <button id="new-chat-btn" class="nav-button">New Chat</button>
-            </nav>
-            <div class="sidebar">
-                <div class="chat-list">
-                    ${chats
-                      .map(
-                        (chat) => `
-                        <div class="chat-item ${
-                          chat.id === currentChat.id ? "active" : ""
-                        }" 
-                             data-chat-id="${chat.id}">
-                            ${chat.title}
-                        </div>
-                    `
-                      )
-                      .join("")}
-                </div>
-            </div>
-            <div id="chat-container">
-                <div id="messages"></div>
-                <div id="input-container">
-                    <input type="text" id="message-input" placeholder="Ask Claude...">
-                    <button id="send-button">Send</button>
-                </div>
-            </div>
+        <style>
+          .auto-resize-textarea {
+            width: 100%;
+            min-height: 50px;
+            padding: 8px;
+            box-sizing: border-box;
+            resize: none;
+            overflow-y: hidden;
+            font-family: var(--vscode-editor-font-family);
+            background: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: 1px solid var(--vscode-input-border);
+            margin-top: 10px;
+          }
+        </style>
+      </head>
+      <body id="app">
+        <nav class="chat-nav">
+          <button id="new-chat-btn" class="nav-button">New Chat</button>
+          <button id="old-chat-btn" class="nav-button">History</button> 
+        </nav>
+          
+        <div id="chat-container">
+          <div id="messages"></div>
         </div>
+
+        <textarea 
+          id="message-input" 
+          class="auto-resize-textarea"
+          placeholder="Type your message..."
+          oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"
+        ></textarea>
+
         <script nonce="${nonce}" src="${scriptUri}"></script>
         <script nonce="${nonce}">
-            // Initialize with current chat data
-            window.currentChat = ${JSON.stringify(currentChat)};
-            window.chats = ${JSON.stringify(chats)};
+          // Initialize with current chat data
+          window.currentChat = ${JSON.stringify(currentChat)};
+          window.chats = ${JSON.stringify(chats)};
+
+          // Handle textarea resize
+          const textarea = document.getElementById('message-input');
+          textarea.addEventListener('keyup', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+          });
+          
+          // Handle paste events
+          textarea.addEventListener('paste', function() {
+            setTimeout(() => {
+              this.style.height = 'auto';
+              this.style.height = (this.scrollHeight) + 'px';
+            }, 0);
+          });
         </script>
-    </body>
+      </body>
     </html>`;
 }
