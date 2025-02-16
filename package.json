@@ -13,6 +13,9 @@
     "onCommand:vscodium-claude.askClaude"
   ],
   "main": "./out/extension.js",
+  "files": [
+    "media/**"
+  ],
   "contributes": {
     "commands": [
       {
