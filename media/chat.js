@@ -101,3 +101,54 @@ window.addEventListener("message", (event) => {
       break;
   }
 });
+
+document.getElementById("new-chat-btn").addEventListener("click", () => {
+  vscode.postMessage({ command: "createNewChat" });
+});
+
+document.querySelectorAll(".chat-item").forEach((item) => {
+  item.addEventListener("click", () => {
+    const chatId = item.dataset.chatId;
+    vscode.postMessage({
+      command: "loadChat",
+      chatId: chatId,
+    });
+  });
+});
+
+window.addEventListener("message", (event) => {
+  const message = event.data;
+  switch (message.command) {
+    case "chatCreated":
+      // Add new chat to sidebar and switch to it
+      const chatList = document.querySelector(".chat-list");
+      const newChatItem = document.createElement("div");
+      newChatItem.className = "chat-item active";
+      newChatItem.dataset.chatId = message.chat.id;
+      newChatItem.textContent = message.chat.title;
+      chatList.prepend(newChatItem);
+
+      // Clear messages
+      document.getElementById("messages").innerHTML = "";
+      break;
+
+    case "chatLoaded":
+      // Update active chat and display messages
+      window.currentChat = message.chat;
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML = "";
+
+      message.chat.messages.forEach((msg) => {
+        addMessage(msg.content, msg.role === "user");
+      });
+
+      // Update active chat in sidebar
+      document.querySelectorAll(".chat-item").forEach((item) => {
+        item.classList.toggle(
+          "active",
+          item.dataset.chatId === message.chat.id
+        );
+      });
+      break;
+  }
+});

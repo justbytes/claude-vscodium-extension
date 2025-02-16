@@ -4,30 +4,21 @@ exports.activate = activate;
 const vscode = require("vscode");
 const sdk_1 = require("@anthropic-ai/sdk");
 const utilities_1 = require("./utilities");
+const chatStorage_1 = require("./chatStorage");
 function activate(context) {
+    // Initialize chat storage
+    const chatStorage = new chatStorage_1.ChatStorage(context.globalState);
     let disposable = vscode.commands.registerCommand("vscodium-claude.askClaude", async () => {
-        // Get API key from configuration
         const config = vscode.workspace.getConfiguration("claudeAI");
         const apiKey = config.get("apiKey");
         if (!apiKey) {
             vscode.window.showErrorMessage("Please set your Claude API key in settings");
             return;
         }
-        // Create Anthropic client
-        const anthropic = new sdk_1.default({
-            apiKey: apiKey,
-        });
-        // Get selected text or current file content
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showInformationMessage("No editor is active");
-            return;
-        }
-        const selection = editor.selection;
-        const text = editor.document.getText(selection.isEmpty ? undefined : selection);
-        // Create webview panel for chat
+        const anthropic = new sdk_1.default({ apiKey });
         const panel = vscode.window.createWebviewPanel("claudeChat", "Chat with Claude", vscode.ViewColumn.Beside, {
             enableScripts: true,
+            retainContextWhenHidden: true,
             localResourceRoots: [
                 vscode.Uri.joinPath(context.extensionUri, "media"),
             ],
@@ -35,11 +26,14 @@ function activate(context) {
         // Get paths to resource files
         const styleMainPath = vscode.Uri.joinPath(context.extensionUri, "media", "chat.css");
         const scriptPath = vscode.Uri.joinPath(context.extensionUri, "media", "chat.js");
-        // And get the special URI to use with the webview
         const styleVSCodeUri = panel.webview.asWebviewUri(styleMainPath);
         const scriptUri = panel.webview.asWebviewUri(scriptPath);
+        // Load existing chats
+        const chats = await chatStorage.getAllChats();
+        // Create new chat
+        const currentChat = await chatStorage.createChat();
         // Set webview HTML content
-        panel.webview.html = getWebviewContent(panel.webview, styleVSCodeUri, scriptUri);
+        panel.webview.html = getWebviewContent(panel.webview, styleVSCodeUri, scriptUri, chats, currentChat);
         // Handle messages from webview
         panel.webview.onDidReceiveMessage(async (message) => {
             switch (message.command) {
@@ -48,22 +42,47 @@ function activate(context) {
                         const response = await anthropic.messages.create({
                             model: "claude-3-opus-20240229",
                             max_tokens: 1000,
-                            messages: [
-                                {
-                                    role: "user",
-                                    content: message.text,
-                                },
-                            ],
+                            messages: [{ role: "user", content: message.text }],
                             system: "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.",
                         });
+                        const newMessage = {
+                            role: "user",
+                            content: message.text,
+                            timestamp: new Date().toISOString(),
+                        };
+                        const assistantMessage = {
+                            role: "assistant",
+                            content: response.content[0].text,
+                            timestamp: new Date().toISOString(),
+                        };
+                        // Save messages to storage
+                        await chatStorage.addMessageToChat(currentChat.id, newMessage);
+                        await chatStorage.addMessageToChat(currentChat.id, assistantMessage);
                         // Send response back to webview
                         panel.webview.postMessage({
                             command: "receiveMessage",
                             text: response.content[0].text,
+                            chatId: currentChat.id,
                         });
                     }
                     catch (error) {
                         vscode.window.showErrorMessage("Error communicating with Claude: " + error);
+                    }
+                    break;
+                case "createNewChat":
+                    const newChat = await chatStorage.createChat();
+                    panel.webview.postMessage({
+                        command: "chatCreated",
+                        chat: newChat,
+                    });
+                    break;
+                case "loadChat":
+                    const chatToLoad = await chatStorage.getChat(message.chatId);
+                    if (chatToLoad) {
+                        panel.webview.postMessage({
+                            command: "chatLoaded",
+                            chat: chatToLoad,
+                        });
                     }
                     break;
             }
@@ -71,26 +90,50 @@ function activate(context) {
     });
     context.subscriptions.push(disposable);
 }
-function getWebviewContent(webview, styleUri, scriptUri) {
+// Add to the end of getWebviewContent function:
+function getWebviewContent(webview, styleUri, scriptUri, chats, currentChat) {
     const nonce = (0, utilities_1.getNonce)();
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
         <link href="${styleUri}" rel="stylesheet">
         <title>Chat with Claude</title>
     </head>
     <body>
-        <div id="chat-container">
-            <div id="messages"></div>
-            <div id="input-container">
-                <input type="text" id="message-input" placeholder="Ask Claude...">
-                <button id="send-button">Send</button>
+        <div id="app">
+            <nav class="chat-nav">
+                <div class="nav-title">Claude Chats</div>
+                <button id="new-chat-btn" class="nav-button">New Chat</button>
+            </nav>
+            <div class="sidebar">
+                <div class="chat-list">
+                    ${chats
+        .map((chat) => `
+                        <div class="chat-item ${chat.id === currentChat.id ? "active" : ""}" 
+                             data-chat-id="${chat.id}">
+                            ${chat.title}
+                        </div>
+                    `)
+        .join("")}
+                </div>
+            </div>
+            <div id="chat-container">
+                <div id="messages"></div>
+                <div id="input-container">
+                    <input type="text" id="message-input" placeholder="Ask Claude...">
+                    <button id="send-button">Send</button>
+                </div>
             </div>
         </div>
         <script nonce="${nonce}" src="${scriptUri}"></script>
+        <script nonce="${nonce}">
+            // Initialize with current chat data
+            window.currentChat = ${JSON.stringify(currentChat)};
+            window.chats = ${JSON.stringify(chats)};
+        </script>
     </body>
     </html>`;
 }
