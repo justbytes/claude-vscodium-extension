@@ -1,36 +1,7 @@
 const vscode = acquireVsCodeApi();
+const messageInput = document.getElementById("message-input");
 const messagesDiv = document.getElementById("messages");
-//const messageInput = document.getElementsById("textarea");
 const sendButton = document.getElementById("send-button");
-
-const textarea = document.getElementById("message-input");
-
-function autoResize() {
-  // Reset height temporarily to get the correct scrollHeight
-  textarea.style.height = "0px";
-
-  // Set to scrollHeight + some padding for better visual appearance
-  const newHeight = textarea.scrollHeight + 2;
-  textarea.style.height = newHeight + "px";
-
-  // Ensure minimum height
-  if (newHeight < 50) {
-    textarea.style.height = "50px";
-  }
-}
-
-// Add event listeners
-textarea.addEventListener("input", autoResize);
-textarea.addEventListener("change", autoResize);
-
-// Initial resize
-autoResize();
-
-// Also resize on paste events
-textarea.addEventListener("paste", () => {
-  // Use setTimeout to allow the paste to complete
-  setTimeout(autoResize, 0);
-});
 
 function createLoadingIndicator() {
   const loadingDiv = document.createElement("div");

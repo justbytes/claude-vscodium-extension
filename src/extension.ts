@@ -144,68 +144,66 @@ function getWebviewContent(
 
   return `<!DOCTYPE html>
     <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
-          webview.cspSource
-        } 'unsafe-inline'; script-src 'nonce-${nonce}';">
-        <link href="${styleUri}" rel="stylesheet">
-        <title>Chat with Claude</title>
-        <style>
-          .auto-resize-textarea {
-            width: 100%;
-            min-height: 50px;
-            padding: 8px;
-            box-sizing: border-box;
-            resize: none;
-            overflow-y: hidden;
-            font-family: var(--vscode-editor-font-family);
-            background: var(--vscode-input-background);
-            color: var(--vscode-input-foreground);
-            border: 1px solid var(--vscode-input-border);
-            margin-top: 10px;
-          }
-        </style>
-      </head>
-      <body id="app">
-        <nav class="chat-nav">
-          <button id="new-chat-btn" class="nav-button">New Chat</button>
-          <button id="old-chat-btn" class="nav-button">History</button> 
-        </nav>
-          
-        <div id="chat-container">
-          <div id="messages"></div>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
+        webview.cspSource
+      } 'unsafe-inline'; script-src 'nonce-${nonce}';">
+      <link href="${styleUri}" rel="stylesheet">
+      <title>Chat with Claude</title>
+      
+    </head>
+    <body id="app">
+      <nav class="chat-nav">
+        <button id="new-chat-btn" class="nav-button">New Chat</button>
+        <button id="old-chat-btn" class="nav-button">History</button> 
+      </nav>
+        
+      <div id="chat-container">
+        <div id="messages"></div>
+      </div>
+
+      <div class="prompt-container">
+        <div class="long-box">
+          <div class="context"></div>
+          <div class="prompt-textarea">
+            <textarea 
+              id="message-input" 
+              class="auto-resize-textarea"
+              placeholder="Type your message..."
+            
+            ></textarea>
+          </div>
         </div>
+        <div class="prompt-btns">
+          <button class="submit-prompt">↑</button>
+          <button class="attachment">📎</button>
+        </div>
+      </div>
 
-        <textarea 
-          id="message-input" 
-          class="auto-resize-textarea"
-          placeholder="Type your message..."
-          oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"
-        ></textarea>
+      <script nonce="${nonce}" src="${scriptUri}"></script>
+      <script nonce="${nonce}">
+        // Initialize with current chat data
+        window.currentChat = ${JSON.stringify(currentChat)};
+        window.chats = ${JSON.stringify(chats)};
 
-        <script nonce="${nonce}" src="${scriptUri}"></script>
-        <script nonce="${nonce}">
-          // Initialize with current chat data
-          window.currentChat = ${JSON.stringify(currentChat)};
-          window.chats = ${JSON.stringify(chats)};
+        // Handle textarea resize
+        const textarea = document.getElementById('message-input');
 
-          // Handle textarea resize
-          const textarea = document.getElementById('message-input');
-          textarea.addEventListener('keyup', function() {
+        textarea.addEventListener('keyup', function() {
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Handle paste events
+        textarea.addEventListener('paste', function() {
+          setTimeout(() => {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
-          });
-          
-          // Handle paste events
-          textarea.addEventListener('paste', function() {
-            setTimeout(() => {
-              this.style.height = 'auto';
-              this.style.height = (this.scrollHeight) + 'px';
-            }, 0);
-          });
-        </script>
-      </body>
+          }, 0);
+        });
+      </script>
+    </body>
     </html>`;
 }

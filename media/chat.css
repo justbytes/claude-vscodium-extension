@@ -7,8 +7,7 @@ body {
 }
 
 #app {
-  display: flex;
-  flex-direction: column;
+  display: inline;
   height: 100vh;
   overflow: hidden;
 }
@@ -124,29 +123,40 @@ body {
   }
 }
 
-#prompt-container {
-  padding: 5px;
+.prompt-container {
   border: 1px solid blue;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  position: fixed; /* Add this */
+  bottom: 0; /* Add this */
+  left: 0; /* Add this */
+  width: 100%; /* Add this */
+  background: var(--vscode-input-background); /* Optional, for background */
 }
 
-/* .context {
+.long-box {
+  width: 88%;
+}
 
-} */
 .auto-resize-textarea {
   width: 100%;
   min-height: 50px;
   padding: 8px;
   box-sizing: border-box;
   resize: none;
-  overflow: hidden !important; /* Force hidden overflow */
   font-family: var(--vscode-editor-font-family);
   background: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
   border: 1px solid var(--vscode-input-border);
   margin-top: 10px;
-  transition: height 0.1s ease-out;
-  line-height: 1.5;
+  max-height: 20rem;
 }
+
+.prompt-btns {
+  width: 8%;
+}
+
 button {
   padding: 8px 16px;
   background: var(--vscode-button-background);
