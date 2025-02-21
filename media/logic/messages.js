@@ -1,16 +1,6 @@
 const vscode = acquireVsCodeApi();
 const messagesDiv = document.getElementById("messages");
 
-function createLoadingIndicator() {
-  const loadingDiv = document.createElement("div");
-  loadingDiv.className = "loading";
-  loadingDiv.innerHTML = `
-          <div class="loading-spinner"></div>
-          <span>Claude is thinking...</span>
-      `;
-  return loadingDiv;
-}
-
 function formatCodeBlocks(text) {
   const parts = text.split(/```(\w*)\n?/);
   let formatted = "";

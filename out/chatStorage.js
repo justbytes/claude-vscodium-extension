@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatStorage = void 0;
-const utilities_1 = require("./utilities");
+const nonce_1 = require("./utils/nonce");
 class ChatStorage {
     constructor(storage) {
         this.storage = storage;
@@ -43,7 +43,7 @@ class ChatStorage {
 exports.ChatStorage = ChatStorage;
 // Add to the end of getWebviewContent function:
 function getWebviewContent(webview, styleUri, scriptUri, chats, currentChat) {
-    const nonce = (0, utilities_1.getNonce)();
+    const nonce = (0, nonce_1.getNonce)();
     return `<!DOCTYPE html>
       <html lang="en">
       <head>
