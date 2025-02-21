@@ -1,15 +1,13 @@
 const vscode = acquireVsCodeApi();
-const messageInput = document.getElementById("message-input");
 const messagesDiv = document.getElementById("messages");
-const sendButton = document.getElementById("send-button");
 
 function createLoadingIndicator() {
   const loadingDiv = document.createElement("div");
   loadingDiv.className = "loading";
   loadingDiv.innerHTML = `
-        <div class="loading-spinner"></div>
-        <span>Claude is thinking...</span>
-    `;
+          <div class="loading-spinner"></div>
+          <span>Claude is thinking...</span>
+      `;
   return loadingDiv;
 }
 
@@ -25,9 +23,9 @@ function formatCodeBlocks(text) {
 
     if (isInCodeBlock) {
       formatted += `<div class="code-block">
-                            <button class="copy-button">Copy</button>
-                            <pre><code>${part}</code></pre>
-                        </div>`;
+                              <button class="copy-button">Copy</button>
+                              <pre><code>${part}</code></pre>
+                          </div>`;
     } else {
       formatted += part.replace(/\n/g, "<br>");
     }
@@ -66,29 +64,6 @@ function addMessage(text, isUser) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-sendButton.addEventListener("click", () => {
-  const text = messageInput.value;
-  if (text) {
-    addMessage(text, true);
-
-    const loadingIndicator = createLoadingIndicator();
-    messagesDiv.appendChild(loadingIndicator);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    vscode.postMessage({
-      command: "sendMessage",
-      text: text,
-    });
-    messageInput.value = "";
-  }
-});
-
-messageInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    sendButton.click();
-  }
-});
-
 window.addEventListener("message", (event) => {
   const message = event.data;
   switch (message.command) {
@@ -100,38 +75,6 @@ window.addEventListener("message", (event) => {
       addMessage(message.text, false);
       break;
   }
-});
-
-document.getElementById("new-chat-btn").addEventListener("click", () => {
-  vscode.postMessage({ command: "createNewChat" });
-});
-
-document.getElementById("old-chat-btn").addEventListener("click", () => {
-  <div class="chat-list">
-    $
-    {chats
-      .map(
-        (chat) => `
-                        <div class="chat-item ${
-                          chat.id === currentChat.id ? "active" : ""
-                        }" 
-                             data-chat-id="${chat.id}">
-                            ${chat.title}
-                        </div>
-                    `
-      )
-      .join("")}
-  </div>;
-});
-
-document.querySelectorAll(".chat-item").forEach((item) => {
-  item.addEventListener("click", () => {
-    const chatId = item.dataset.chatId;
-    vscode.postMessage({
-      command: "loadChat",
-      chatId: chatId,
-    });
-  });
 });
 
 window.addEventListener("message", (event) => {

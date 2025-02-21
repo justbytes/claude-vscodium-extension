@@ -1,0 +1,33 @@
+.prompt-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--vscode-input-background);
+  margin: 2px;
+}
+
+.long-box {
+  width: 88%;
+}
+
+.auto-resize-textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 8px;
+  box-sizing: border-box;
+  resize: none;
+  font-family: var(--vscode-editor-font-family);
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  margin-top: 10px;
+  max-height: 20rem;
+}
+
+.prompt-btns {
+  width: 8%;
+}

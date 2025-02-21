@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import Anthropic from "@anthropic-ai/sdk";
-import { getNonce } from "./utilities";
+import { getNonce } from "./utils/nonce";
 import { Chat, ChatMessage, ChatStorage } from "./chatStorage";
 
 export function activate(context: vscode.ExtensionContext) {

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getNonce } from "./utilities";
+import { getNonce } from "./utils/nonce";
 
 export interface ChatMessage {
   role: "user" | "assistant";
