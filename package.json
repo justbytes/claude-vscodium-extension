@@ -14,7 +14,7 @@
   ],
   "main": "./out/extension.js",
   "files": [
-    "media/**/*"
+    "src/**/*"
   ],
   "contributes": {
     "commands": [
