@@ -36,33 +36,33 @@ const initialWebviewContext = (extensionUri, panel, currentChat) => {
         <title>Chat with Claude</title>
       </head>
       <body id="app">
-        
-        <nav class="chat-nav">
-            <button id="new-chat-btn" class="nav-button">New Chat</button>
-            <button id="old-chat-btn" class="nav-button">History</button> 
-        </nav>
-        
-        <div id="chat-container">
-            <div id="messages"></div>
-        </div>
+        <div>
+            <nav class="chat-nav">
+                <button id="new-chat-btn" class="nav-button">+</button>
+                <button id="old-chat-btn" class="nav-button">🕑</button> 
+            </nav>
+            
+            <div id="chat-container">
+                <div id="messages"></div>
+            </div>
 
-        <div class="prompt-container">
-            <div class="long-box">
-                <div class="context"></div>
-                <div class="prompt-textarea">
-                    <textarea 
-                    id="message-input" 
-                    class="auto-resize-textarea"
-                    placeholder="Type your message..."
-                    ></textarea>
+            <div class="prompt-container">
+                <div class="long-box">
+                    <div class="context"></div>
+                    <div class="prompt-textarea">
+                        <textarea 
+                        id="message-input" 
+                        class="auto-resize-textarea"
+                        placeholder="Type your message..."
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="prompt-btns">
+                    <button id="submit-prompt">↑</button>
+                    <button class="attachment">📎</button>
                 </div>
             </div>
-            <div class="prompt-btns">
-                <button id="submit-prompt">↑</button>
-                <button class="attachment">📎</button>
-            </div>
         </div>
-  
         <script nonce="${nonce}" src="${promptLogicUri}"></script>
         <script nonce="${nonce}">
             window.currentChat = ${JSON.stringify(currentChat)};

@@ -1,6 +1,7 @@
 .chat-nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   padding: 10px;
   border-bottom: 1px solid red;
+  height: 10%;
 }

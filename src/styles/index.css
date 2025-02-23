@@ -1,19 +1,13 @@
 body {
-  margin: 0;
-  padding: 10px;
   background: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
   font-family: var(--vscode-font-family);
-}
-
-#app {
-  display: inline;
   height: 100vh;
-  overflow: hidden;
 }
 
 button {
-  padding: 8px 16px;
+  /* border-radius: 0px; */
+  /* padding: 8px 16px; */
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
   border: none;
