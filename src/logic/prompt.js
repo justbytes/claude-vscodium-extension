@@ -1,4 +1,5 @@
 const vscode = acquireVsCodeApi();
+const chatContainer = document.getElementById("chat-container");
 const textarea = document.getElementById("message-input");
 const sendButton = document.getElementById("submit-prompt");
 const attachment = document.querySelector(".attachment");
@@ -125,11 +126,50 @@ function createLoadingIndicator() {
  * Adjusts the size of the prompt box
  */
 function adjustTextareaHeight() {
+  // Reset to get the natural height
   textarea.style.height = "auto";
-  const maxHeight = 300;
-  textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + "px";
-  textarea.style.overflowY =
-    textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+
+  // Get the current scrollHeight
+  const scrollHeight = textarea.scrollHeight;
+
+  // Define min and max heights in pixels
+  const minHeight = 50; // 50px minimum height
+  const maxHeight = window.innerHeight * 0.3; // 30vh maximum height
+
+  // Calculate the new height within limits
+  const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
+
+  // Set the textarea height
+  textarea.style.height = newHeight + "px";
+
+  // Add scrollbars if content exceeds max height
+  textarea.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
+
+  // Set CSS variable for the textarea height that can be used in calculations elsewhere
+  document.documentElement.style.setProperty(
+    "--textarea-height",
+    newHeight + "px"
+  );
+
+  // Dynamically adjust the chat container height based on the textarea height
+  const chatContainer = document.getElementById("chat-container");
+  if (chatContainer) {
+    // Available height minus navbar (estimated at 50px) and textarea height
+    const navbarHeight = 50; // Estimate of navbar height
+    const availableHeight = window.innerHeight - navbarHeight - newHeight - 20; // 20px for margins
+    chatContainer.style.height = availableHeight + "px";
+  }
+
+  // Scroll messages to bottom if they were already at the bottom
+  const messagesDiv = document.getElementById("messages");
+  const wasAtBottom =
+    messagesDiv.scrollHeight - messagesDiv.scrollTop <=
+    messagesDiv.clientHeight + 10;
+  if (wasAtBottom) {
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 10);
+  }
 }
 
 /**
@@ -172,6 +212,12 @@ textarea.addEventListener("keyup", adjustTextareaHeight);
 textarea.addEventListener("paste", () => {
   setTimeout(adjustTextareaHeight, 0);
 });
+
+// Run the adjustment on page load to set initial heights
+window.addEventListener("load", adjustTextareaHeight);
+
+// Also adjust heights when window is resized
+window.addEventListener("resize", adjustTextareaHeight);
 
 // Initial height adjustment
 adjustTextareaHeight();

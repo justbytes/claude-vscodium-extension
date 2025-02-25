@@ -2,8 +2,22 @@
   display: flex;
   flex-direction: column;
   border: 1px solid green;
-  height: 75%;
+  /* Remove fixed height and make it flexible */
+  height: calc(85vh - var(--textarea-height, 50px));
+  width: 100%;
+  transition: height 0.2s ease;
+  overflow: hidden;
 }
+
+/* Changes to prompt.css */
+
+/* #chat-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid green;
+  height: 85vh;
+  width: 100%;
+} */
 
 .chat-list {
   flex: 1;
