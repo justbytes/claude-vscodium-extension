@@ -1,23 +1,15 @@
 #chat-container {
   display: flex;
   flex-direction: column;
-  border: 1px solid green;
-  /* Remove fixed height and make it flexible */
+  border: 1px solid grey;
+  border-radius: 2px;
   height: calc(85vh - var(--textarea-height, 50px));
   width: 100%;
   transition: height 0.2s ease;
   overflow: hidden;
+  padding: 5px;
+  margin: 5px;
 }
-
-/* Changes to prompt.css */
-
-/* #chat-container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid green;
-  height: 85vh;
-  width: 100%;
-} */
 
 .chat-list {
   flex: 1;

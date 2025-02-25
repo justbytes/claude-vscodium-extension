@@ -1,7 +1,11 @@
 .chat-nav {
   display: flex;
   justify-content: end;
-  padding: 2px;
-  border: 1px solid red;
   height: 2vh;
+  width: 96vw;
+  margin: 2px;
+}
+
+.nav-button {
+  margin: 3px;
 }

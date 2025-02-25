@@ -78,8 +78,8 @@ export const initialWebviewContext = (
                   </div>
               </div>
               <div class="prompt-btns">
-                  <button id="submit-prompt">↑</button>
-                  <button class="attachment">📎</button>
+                  <button id="submit-prompt" class="prompt-btn">↑</button>
+                  <button id="attachment" class="prompt-btn">📎</button>
               </div>
           </div>
         
