@@ -3,6 +3,30 @@ function formatDate(dateString) {
   return date.toLocaleString();
 }
 
+function formatTimeAgo(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  // Calculate time difference in milliseconds
+  const diffMs = now - date;
+
+  // Convert to minutes, hours, days
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // Format based on time difference
+  if (diffMinutes < 1) {
+    return "just now";
+  } else if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  } else {
+    return `${diffDays}d ago`;
+  }
+}
+
 function renderOldChats(chats) {
   console.log("Rendering old chats:", chats);
   const container = document.getElementById("old-chats-container");
@@ -35,7 +59,10 @@ function renderOldChats(chats) {
       (chat) => `
     <div class="old-chat-item" data-chat-id="${chat.id}">
       <div class="chat-title">${chat.title}</div>
-      <div class="chat-date">${formatDate(chat.createdAt)}</div>
+      <div class="chat-date">
+        <p>${formatTimeAgo(chat.createdAt)}</p>
+        <button id="delete-btn">🗑️</button>
+      </div>
     </div>
   `
     )
@@ -45,6 +72,9 @@ function renderOldChats(chats) {
     <h2>Previous Chats</h2>
     ${chatsList}
   `;
+  
+  const deleteBtn;
+  container.querySelector("#delete-btn")
 
   // Add event listeners to chat items
   container.querySelectorAll(".old-chat-item").forEach((item) => {

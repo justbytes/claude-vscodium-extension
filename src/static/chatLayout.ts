@@ -115,7 +115,7 @@ export const initialWebviewContext = (
                   vscode.postMessage({ command: "getAllChats" });
               } else if (view === 'chat') {
                   // Switch back to chat view
-                  if (mainContainer) mainContainer.style.display = 'flex';
+                  if (mainContainer) mainContainer.style.display = '';
                   if (oldChatsContainer) oldChatsContainer.style.display = 'none';
                   
                   // No need to request or change anything about the current chat
