@@ -1,4 +1,3 @@
-const vscode = acquireVsCodeApi();
 const chatContainer = document.getElementById("chat-container");
 const textarea = document.getElementById("message-input");
 const sendButton = document.getElementById("submit-prompt");
@@ -58,6 +57,19 @@ function addMessage(text, isUser) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
+// window.addEventListener("message", (event) => {
+//   const message = event.data;
+//   switch (message.command) {
+//     case "receiveMessage":
+//       const loadingIndicator = document.querySelector(".loading");
+//       if (loadingIndicator) {
+//         loadingIndicator.remove();
+//       }
+//       addMessage(message.text, false);
+//       break;
+//   }
+// });
+
 window.addEventListener("message", (event) => {
   const message = event.data;
   switch (message.command) {
@@ -68,42 +80,32 @@ window.addEventListener("message", (event) => {
       }
       addMessage(message.text, false);
       break;
-  }
-});
-
-window.addEventListener("message", (event) => {
-  const message = event.data;
-  switch (message.command) {
     case "chatCreated":
-      // Add new chat to sidebar and switch to it
-      const chatList = document.querySelector(".chat-list");
-      const newChatItem = document.createElement("div");
-      newChatItem.className = "chat-item active";
-      newChatItem.dataset.chatId = message.chat.id;
-      newChatItem.textContent = message.chat.title;
-      chatList.prepend(newChatItem);
+      const messagesDiv = document.getElementById("messages");
+      if (messagesDiv) {
+        messagesDiv.innerHTML = "";
+      }
 
-      // Clear messages
-      document.getElementById("messages").innerHTML = "";
+      // Update the current chat reference
+      window.currentChat = message.chat;
       break;
 
     case "chatLoaded":
-      // Update active chat and display messages
+      console.log("Chat loaded:", message.chat.id);
+      // Update active chat and display messages without changing layout
       window.currentChat = message.chat;
-      const messagesDiv = document.getElementById("messages");
-      messagesDiv.innerHTML = "";
+      const msgDiv = document.getElementById("messages");
+      if (msgDiv) {
+        msgDiv.innerHTML = "";
 
-      message.chat.messages.forEach((msg) => {
-        addMessage(msg.content, msg.role === "user");
-      });
+        // Add each message from the loaded chat
+        message.chat.messages.forEach((msg) => {
+          addMessage(msg.content, msg.role === "user");
+        });
 
-      // Update active chat in sidebar
-      document.querySelectorAll(".chat-item").forEach((item) => {
-        item.classList.toggle(
-          "active",
-          item.dataset.chatId === message.chat.id
-        );
-      });
+        // Scroll to the bottom of the messages
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+      }
       break;
   }
 });

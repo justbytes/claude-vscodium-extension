@@ -41,6 +41,9 @@ export class App {
     // Handle messages from webview
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
+        // Add debugging
+        console.log("Extension received message:", message.command);
+
         switch (message.command) {
           case "sendMessage":
             await this._handleSendMessage(message.text);
@@ -52,6 +55,14 @@ export class App {
 
           case "loadChat":
             await this._handleLoadChat(message.chatId);
+            break;
+
+          case "getAllChats":
+            await this._handleGetAllChats();
+            break;
+
+          default:
+            console.log("Unknown command received:", message.command);
             break;
         }
       },
@@ -82,8 +93,23 @@ export class App {
       return;
     }
 
-    // Create new chat
-    const currentChat = await chatStorage.createChat();
+    // Try to get all chats and find the most recent one
+    let currentChat: Chat;
+    try {
+      const allChats = await chatStorage.getAllChats();
+
+      if (allChats.length > 0) {
+        // Chats are already sorted by creation date (newest first)
+        currentChat = allChats[0];
+      } else {
+        // Create a new chat if none exists
+        currentChat = await chatStorage.createChat();
+      }
+    } catch (error) {
+      console.error("Error loading chats:", error);
+      // Create a new chat if there was an error
+      currentChat = await chatStorage.createChat();
+    }
 
     // Create new panel instance
     App._current = new App(extensionUri, anthropic, chatStorage, currentChat);
@@ -135,22 +161,63 @@ export class App {
   }
 
   private async _handleCreateNewChat(): Promise<void> {
-    const newChat = await this._chatStorage.createChat();
-    this._currentChat = newChat;
-    this._panel.webview.postMessage({
-      command: "chatCreated",
-      chat: newChat,
-    });
+    try {
+      console.log("Creating new chat");
+      const newChat = await this._chatStorage.createChat();
+      this._currentChat = newChat;
+
+      console.log("New chat created:", newChat.id);
+
+      // Send response back to webview
+      this._panel.webview.postMessage({
+        command: "chatCreated",
+        chat: newChat,
+      });
+    } catch (error) {
+      console.error("Error creating new chat:", error);
+      vscode.window.showErrorMessage("Error creating new chat: " + error);
+    }
+  }
+
+  private async _handleGetAllChats(): Promise<void> {
+    try {
+      console.log("Getting all chats");
+      const allChats = await this._chatStorage.getAllChats();
+
+      console.log("Found chats:", allChats.length);
+
+      // Send chats back to webview
+      this._panel.webview.postMessage({
+        command: "allChatsLoaded",
+        chats: allChats,
+      });
+    } catch (error) {
+      console.error("Error getting all chats:", error);
+      vscode.window.showErrorMessage("Error loading chats: " + error);
+    }
   }
 
   private async _handleLoadChat(chatId: string): Promise<void> {
-    const chatToLoad = await this._chatStorage.getChat(chatId);
-    if (chatToLoad) {
-      this._currentChat = chatToLoad;
-      this._panel.webview.postMessage({
-        command: "chatLoaded",
-        chat: chatToLoad,
-      });
+    try {
+      console.log("Loading chat:", chatId);
+      const chatToLoad = await this._chatStorage.getChat(chatId);
+      if (chatToLoad) {
+        this._currentChat = chatToLoad;
+
+        console.log("Chat loaded with", chatToLoad.messages.length, "messages");
+
+        // Send loaded chat back to webview
+        this._panel.webview.postMessage({
+          command: "chatLoaded",
+          chat: chatToLoad,
+        });
+      } else {
+        console.error("Chat not found:", chatId);
+        vscode.window.showErrorMessage("Chat not found");
+      }
+    } catch (error) {
+      console.error("Error loading chat:", error);
+      vscode.window.showErrorMessage("Error loading chat: " + error);
     }
   }
 

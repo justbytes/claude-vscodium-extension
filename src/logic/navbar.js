@@ -1,25 +1,10 @@
-const vscode = acquireVsCodeApi();
+document.getElementById("old-chat-btn").addEventListener("click", () => {
+  toggleView("old-chats");
+});
 
 document.getElementById("new-chat-btn").addEventListener("click", () => {
   vscode.postMessage({ command: "createNewChat" });
-});
-
-document.getElementById("old-chat-btn").addEventListener("click", () => {
-  <div class="chat-list">
-    $
-    {chats
-      .map(
-        (chat) => `
-                          <div class="chat-item ${
-                            chat.id === currentChat.id ? "active" : ""
-                          }" 
-                               data-chat-id="${chat.id}">
-                              ${chat.title}
-                          </div>
-                      `
-      )
-      .join("")}
-  </div>;
+  toggleView("chat");
 });
 
 document.querySelectorAll(".chat-item").forEach((item) => {

@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { getNonce } from "./utils/nonce";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -58,65 +57,4 @@ export class ChatStorage {
       await this.saveChats(chats);
     }
   }
-}
-
-// Add to the end of getWebviewContent function:
-function getWebviewContent(
-  webview: vscode.Webview,
-  styleUri: vscode.Uri,
-  scriptUri: vscode.Uri,
-  chats: Chat[],
-  currentChat: Chat
-) {
-  const nonce = getNonce();
-
-  return `<!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
-            webview.cspSource
-          } 'unsafe-inline'; script-src 'nonce-${nonce}';">
-          <link href="${styleUri}" rel="stylesheet">
-          <title>Chat with Claude</title>
-      </head>
-      <body>
-          <div id="app">
-              <nav class="chat-nav">
-                  <div class="nav-title">Claude Chats</div>
-                  <button id="new-chat-btn" class="nav-button">New Chat</button>
-              </nav>
-              <div class="sidebar">
-                  <div class="chat-list">
-                      ${chats
-                        .map(
-                          (chat) => `
-                          <div class="chat-item ${
-                            chat.id === currentChat.id ? "active" : ""
-                          }" 
-                               data-chat-id="${chat.id}">
-                              ${chat.title}
-                          </div>
-                      `
-                        )
-                        .join("")}
-                  </div>
-              </div>
-              <div id="chat-container">
-                  <div id="messages"></div>
-                  <div id="input-container">
-                      <input type="text" id="message-input" placeholder="Ask Claude...">
-                      <button id="send-button">Send</button>
-                  </div>
-              </div>
-          </div>
-          <script nonce="${nonce}" src="${scriptUri}"></script>
-          <script nonce="${nonce}">
-              // Initialize with current chat data
-              window.currentChat = ${JSON.stringify(currentChat)};
-              window.chats = ${JSON.stringify(chats)};
-          </script>
-      </body>
-      </html>`;
 }
