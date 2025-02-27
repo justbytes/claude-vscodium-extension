@@ -1,20 +1,20 @@
 import * as vscode from "vscode";
 import Anthropic from "@anthropic-ai/sdk";
-import { Chat, ChatMessage, ChatStorage } from "./chatStorage";
+import { Chat, ChatMessage, ChatArchive } from "./ChatArchive";
 import { initialWebviewContext } from "./static/chatLayout";
 
 export class App {
   private static _current: App | undefined;
   private readonly _panel: vscode.WebviewPanel;
   private readonly _anthropic: Anthropic;
-  private readonly _chatStorage: ChatStorage;
+  private readonly _chatStorage: ChatArchive;
   private _currentChat: Chat;
   private _disposables: vscode.Disposable[] = [];
 
   private constructor(
     extensionUri: vscode.Uri,
     anthropic: Anthropic,
-    chatStorage: ChatStorage,
+    chatStorage: ChatArchive,
     currentChat: Chat
   ) {
     this._panel = vscode.window.createWebviewPanel(
@@ -81,7 +81,7 @@ export class App {
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
-    chatStorage: ChatStorage
+    chatStorage: ChatArchive
   ): Promise<void> {
     const config = vscode.workspace.getConfiguration("claudeAI");
     const apiKey = config.get<string>("apiKey");

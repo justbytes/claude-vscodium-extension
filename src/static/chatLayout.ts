@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getNonce } from "../utils/nonce";
-import { Chat, ChatMessage, ChatStorage } from "../chatStorage";
+import { Chat, ChatMessage, ChatArchive } from "../ChatArchive";
 
 export const initialWebviewContext = (
   extensionUri: vscode.Uri,

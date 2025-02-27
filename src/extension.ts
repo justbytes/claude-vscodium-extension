@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
-import { ChatStorage } from "./chatStorage";
+import { ChatArchive } from "./ChatArchive";
 import { App } from "./App";
 
 export function activate(context: vscode.ExtensionContext) {
   // Initialize chat storage
-  const chatStorage = new ChatStorage(context.globalState);
+  const chatStorage = new ChatArchive(context.globalState);
 
   let disposable = vscode.commands.registerCommand(
     "vscodium-claude.askClaude",

@@ -3,9 +3,11 @@
   justify-content: end;
   height: 2vh;
   width: 96vw;
-  margin: 2px;
+  margin: 3px;
 }
 
 .nav-button {
-  margin: 3px;
+  width: 2rem;
+  height: 1.25rem;
+  margin: 2px;
 }

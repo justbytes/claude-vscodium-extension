@@ -13,7 +13,7 @@ export interface Chat {
   title: string;
 }
 
-export class ChatStorage {
+export class ChatArchive {
   constructor(private storage: vscode.Memento) {}
 
   private async getChats(): Promise<{ [key: string]: Chat }> {

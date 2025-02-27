@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
+  padding: 5px;
   margin: 8px 0;
   border-radius: 4px;
   background: var(--vscode-editor-inactiveSelectionBackground);
@@ -30,9 +30,19 @@
   font-weight: bold;
 }
 
-.chat-date {
+.old-chat-item-end {
+  display: flex;
   font-size: 12px;
   color: var(--vscode-descriptionForeground);
+}
+
+.chat-date {
+  margin: 5px;
+}
+
+.delete-btn {
+  margin: 5px;
+  background-color: rgba(255, 0, 0, 0.766);
 }
 
 .empty-state {

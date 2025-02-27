@@ -59,8 +59,8 @@ function renderOldChats(chats) {
       (chat) => `
     <div class="old-chat-item" data-chat-id="${chat.id}">
       <div class="chat-title">${chat.title}</div>
-      <div class="chat-date">
-        <p>${formatTimeAgo(chat.createdAt)}</p>
+      <div class="old-chat-item-end">
+        <p class="chat-date">${formatTimeAgo(chat.createdAt)}</p>
         <button class="delete-btn">🗑️</button>
       </div>
     </div>
@@ -122,8 +122,6 @@ window.addEventListener("message", (event) => {
       });
       break;
     case "allChatsLoaded":
-      console.log("ALLL CHATS LOADED MESSAGE RECIEVED");
-
       renderOldChats(message.chats);
       break;
   }
