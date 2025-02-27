@@ -24,6 +24,16 @@ export class ChatStorage {
     await this.storage.update("chats", chats);
   }
 
+  async deleteChat(chatId: string): Promise<boolean> {
+    const chats = await this.getChats();
+    if (chats[chatId]) {
+      delete chats[chatId];
+      await this.saveChats(chats);
+      return true;
+    }
+    return false;
+  }
+
   async createChat(): Promise<Chat> {
     const chats = await this.getChats();
     const newChat: Chat = {

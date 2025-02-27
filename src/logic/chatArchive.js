@@ -61,7 +61,7 @@ function renderOldChats(chats) {
       <div class="chat-title">${chat.title}</div>
       <div class="chat-date">
         <p>${formatTimeAgo(chat.createdAt)}</p>
-        <button id="delete-btn">🗑️</button>
+        <button class="delete-btn">🗑️</button>
       </div>
     </div>
   `
@@ -72,15 +72,33 @@ function renderOldChats(chats) {
     <h2>Previous Chats</h2>
     ${chatsList}
   `;
-  
-  const deleteBtn;
-  container.querySelector("#delete-btn")
+
+  document.querySelectorAll(".delete-btn").forEach((button) => {
+    button.addEventListener("click", function (event) {
+      // Stop event from bubbling up to prevent triggering the chat selection
+      event.stopPropagation();
+
+      // Find the parent .old-chat-item element
+      const parentChatItem = this.closest(".old-chat-item");
+
+      // Get the chat ID from the parent's data attribute
+      const chatId = parentChatItem.getAttribute("data-chat-id");
+
+      console.log("Deleting chat with ID:", chatId);
+
+      // Send deletion message to the extension
+      vscode.postMessage({
+        command: "deleteChat",
+        chatId: chatId,
+      });
+    });
+  });
 
   // Add event listeners to chat items
   container.querySelectorAll(".old-chat-item").forEach((item) => {
+    const chatId = item.dataset.chatId;
+
     item.addEventListener("click", function () {
-      const chatId = item.dataset.chatId;
-      console.log("Loading chat:", chatId);
       vscode.postMessage({
         command: "loadChat",
         chatId: chatId,
@@ -93,9 +111,20 @@ function renderOldChats(chats) {
 // Listen for messages from the extension
 window.addEventListener("message", (event) => {
   const message = event.data;
-  console.log("Message received in old-chats.js:", message.command);
 
-  if (message.command === "allChatsLoaded") {
-    renderOldChats(message.chats);
+  switch (message.command) {
+    case "deletedChat":
+      console.log("Chat deleted, refreshing UI...");
+
+      // Request all chats to re-render the list
+      vscode.postMessage({
+        command: "getAllChats",
+      });
+      break;
+    case "allChatsLoaded":
+      console.log("ALLL CHATS LOADED MESSAGE RECIEVED");
+
+      renderOldChats(message.chats);
+      break;
   }
 });

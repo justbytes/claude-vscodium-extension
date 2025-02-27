@@ -36,6 +36,12 @@ class App {
                 case "getAllChats":
                     await this._handleGetAllChats();
                     break;
+                case "deleteChat":
+                    await this._handleDeleteChat(message.chatId);
+                    break;
+                case "confirmDeleteChat":
+                    await this._handleConfirmDeleteChat(message.chatId);
+                    break;
                 default:
                     console.log("Unknown command received:", message.command);
                     break;
@@ -162,6 +168,26 @@ class App {
         catch (error) {
             console.error("Error loading chat:", error);
             vscode.window.showErrorMessage("Error loading chat: " + error);
+        }
+    }
+    async _handleDeleteChat(chatId) {
+        console.log("Deleting Chat ", chatId);
+        const success = await this._chatStorage.deleteChat(chatId);
+        if (success) {
+            // if chats list == 0 create a new chat
+            // if () {
+            // }
+            // Otherwise just notify the webview that the chat was deleted
+            this._handleGetAllChats();
+        }
+        else {
+            vscode.window.showErrorMessage("Failed to delete chat");
+        }
+    }
+    async _handleConfirmDeleteChat(chatId) {
+        const result = await vscode.window.showWarningMessage("Are you sure you want to delete this chat?", { modal: true }, "Delete", "Cancel");
+        if (result === "Delete") {
+            await this._handleDeleteChat(chatId);
         }
     }
     _onDispose() {

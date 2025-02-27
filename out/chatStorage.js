@@ -11,6 +11,15 @@ class ChatStorage {
     async saveChats(chats) {
         await this.storage.update("chats", chats);
     }
+    async deleteChat(chatId) {
+        const chats = await this.getChats();
+        if (chats[chatId]) {
+            delete chats[chatId];
+            await this.saveChats(chats);
+            return true;
+        }
+        return false;
+    }
     async createChat() {
         const chats = await this.getChats();
         const newChat = {
