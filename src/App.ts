@@ -125,12 +125,54 @@ export class App {
 
   private async _handleSendMessage(text: string): Promise<void> {
     try {
+      // Get all existing chat messages
+      const allMessages = this._currentChat.messages;
+
+      // Implement a more advanced context management approach
+      let contextMessages: ChatMessage[] = [];
+
+      // Always include the first few messages to maintain the initial context
+      if (allMessages.length > 0) {
+        // Include first 2 messages (likely includes initial instructions/context)
+        contextMessages = contextMessages.concat(
+          allMessages.slice(0, Math.min(2, allMessages.length))
+        );
+      }
+
+      // Always include the most recent messages for immediate context
+      const RECENT_MESSAGES_COUNT = 6;
+      if (allMessages.length > 2) {
+        contextMessages = contextMessages.concat(
+          allMessages.slice(
+            Math.max(2, allMessages.length - RECENT_MESSAGES_COUNT)
+          )
+        );
+      }
+
+      // Convert to Claude API format
+      const previousMessages = contextMessages.map((message) => ({
+        role: message.role,
+        content: message.content,
+      }));
+
+      // Add the new user message
+      previousMessages.push({ role: "user", content: text });
+
+      // Enhance system prompt with info about potential context truncation
+      let systemPrompt =
+        "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.";
+
+      if (allMessages.length > 2 + RECENT_MESSAGES_COUNT) {
+        systemPrompt +=
+          " Some earlier messages in this conversation may have been omitted for context management, but the user expects you to maintain continuity.";
+      }
+
+      // Call Claude API with the optimized context
       const response = await this._anthropic.messages.create({
         model: "claude-3-opus-20240229",
         max_tokens: 1000,
-        messages: [{ role: "user", content: text }],
-        system:
-          "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.",
+        messages: previousMessages,
+        system: systemPrompt,
       });
 
       const userMessage: ChatMessage = {
@@ -234,10 +276,11 @@ export class App {
 
     const success = await this._chatStorage.deleteChat(chatId);
     if (success) {
-      // if chats list == 0 create a new chat
-      // if () {
-
-      // }
+      // Check if we deleted the current chat
+      if (this._currentChat.id === chatId) {
+        // Create a new chat if the deleted chat was the current one
+        await this._handleCreateNewChat();
+      }
 
       // Otherwise just notify the webview that the chat was deleted
       this._handleGetAllChats();

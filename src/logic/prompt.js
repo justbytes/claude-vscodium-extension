@@ -5,26 +5,42 @@ const attachment = document.querySelector(".attachment");
 const messagesDiv = document.getElementById("messages");
 
 function formatCodeBlocks(text) {
-  const parts = text.split(/```(\w*)\n?/);
+  const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+  let lastIndex = 0;
   let formatted = "";
-  let isInCodeBlock = false;
+  let match;
 
-  parts.forEach((part, index) => {
-    if (index % 2 === 1) {
-      return;
-    }
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    // Add text before code block
+    formatted += text.substring(lastIndex, match.index).replace(/\n/g, "<br>");
 
-    if (isInCodeBlock) {
-      formatted += `<div class="code-block">
-                              <button class="copy-button">Copy</button>
-                              <pre><code>${part}</code></pre>
-                          </div>`;
-    } else {
-      formatted += part.replace(/\n/g, "<br>");
-    }
+    // Extract language and code content
+    const language = match[1].trim().toLowerCase();
+    let code = match[2];
 
-    isInCodeBlock = !isInCodeBlock;
-  });
+    // Create a temporary element to escape HTML
+    const tempDiv = document.createElement("div");
+    tempDiv.textContent = code;
+    const escapedCode = tempDiv.innerHTML;
+
+    // Create code block with syntax highlighting
+    formatted += `<div class="code-block">
+      <div class="code-header">
+        ${language ? `<span class="code-language">${language}</span>` : ""}
+        <button class="copy-button">Copy</button>
+      </div>
+      <pre><code class="hljs ${
+        language ? `language-${language}` : ""
+      }">${escapedCode}</code></pre>
+    </div>`;
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add any remaining text
+  if (lastIndex < text.length) {
+    formatted += text.substring(lastIndex).replace(/\n/g, "<br>");
+  }
 
   return formatted;
 }
@@ -39,10 +55,20 @@ function addMessage(text, isUser) {
   } else {
     messageDiv.innerHTML = formatCodeBlocks(text);
 
+    // Wait for a small delay to ensure DOM is updated
+    setTimeout(() => {
+      // Apply syntax highlighting to all code blocks
+      messageDiv.querySelectorAll("pre code.hljs").forEach((block) => {
+        console.log("Applying highlighting to block:", block.className);
+        hljs.highlightElement(block);
+      });
+    }, 10);
+
+    // Add copy functionality
     messageDiv.querySelectorAll(".copy-button").forEach((button) => {
       button.addEventListener("click", () => {
-        const codeBlock = button.nextElementSibling.textContent;
-        navigator.clipboard.writeText(codeBlock);
+        const codeBlock = button.closest(".code-block").querySelector("code");
+        navigator.clipboard.writeText(codeBlock.textContent);
 
         const originalText = button.textContent;
         button.textContent = "Copied!";
@@ -56,19 +82,6 @@ function addMessage(text, isUser) {
   messagesDiv.appendChild(messageDiv);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
-// window.addEventListener("message", (event) => {
-//   const message = event.data;
-//   switch (message.command) {
-//     case "receiveMessage":
-//       const loadingIndicator = document.querySelector(".loading");
-//       if (loadingIndicator) {
-//         loadingIndicator.remove();
-//       }
-//       addMessage(message.text, false);
-//       break;
-//   }
-// });
 
 window.addEventListener("message", (event) => {
   const message = event.data;
@@ -111,7 +124,7 @@ window.addEventListener("message", (event) => {
 });
 
 /**
- * Creates a loading indicatior when the user is waiting for a response from
+ * Creates a loading indicator when the user is waiting for a response from
  * claude
  */
 function createLoadingIndicator() {
@@ -175,6 +188,37 @@ function adjustTextareaHeight() {
 }
 
 /**
+ * Ensure the highlight.js library is properly initialized
+ */
+function initializeHighlightJS() {
+  if (typeof hljs !== "undefined") {
+    console.log("Initializing highlight.js");
+    hljs.configure({
+      languages: [
+        "javascript",
+        "typescript",
+        "python",
+        "java",
+        "csharp",
+        "html",
+        "css",
+        "bash",
+        "json",
+      ],
+      ignoreUnescapedHTML: true,
+    });
+
+    // Apply highlighting to any existing code blocks
+    document.querySelectorAll("pre code.hljs").forEach((block) => {
+      console.log("Initial highlighting for:", block.className);
+      hljs.highlightElement(block);
+    });
+  } else {
+    console.error("highlight.js not loaded!");
+  }
+}
+
+/**
  * Sends the prompt to claude
  */
 sendButton.addEventListener("click", () => {
@@ -216,10 +260,16 @@ textarea.addEventListener("paste", () => {
 });
 
 // Run the adjustment on page load to set initial heights
-window.addEventListener("load", adjustTextareaHeight);
+window.addEventListener("load", () => {
+  adjustTextareaHeight();
+  initializeHighlightJS();
+});
 
 // Also adjust heights when window is resized
 window.addEventListener("resize", adjustTextareaHeight);
+
+// Initialize highlighting
+initializeHighlightJS();
 
 // Initial height adjustment
 adjustTextareaHeight();

@@ -30,12 +30,26 @@ const initialWebviewContext = (extensionUri, panel, currentChat) => {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${panel.webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${panel.webview.cspSource} https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'nonce-${nonce}' https://cdnjs.cloudflare.com; connect-src https://cdnjs.cloudflare.com; img-src ${panel.webview.cspSource} https:; font-src ${panel.webview.cspSource} https:;">
         <link href="${indexStyleUri}" rel="stylesheet">
         <link href="${navbarStyleUri}" rel="stylesheet">
         <link href="${messagesStyleUri}" rel="stylesheet">
         <link href="${promptStyleUri}" rel="stylesheet">
         <link href="${oldChatsStyleUri}" rel="stylesheet">
+        
+        <!-- Add Highlight.js for syntax highlighting -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <!-- Common language pack -->
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/javascript.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/typescript.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/java.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/csharp.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/json.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/html.min.js"></script>
+        <script nonce="${nonce}" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/css.min.js"></script>
     
         <title>Chat with Claude</title>
       </head>
@@ -99,6 +113,24 @@ const initialWebviewContext = (extensionUri, panel, currentChat) => {
             
             // Store current chat data
             window.currentChat = ${JSON.stringify(currentChat)};
+            
+            // Initialize highlight.js
+            window.addEventListener('DOMContentLoaded', (event) => {
+              if (typeof hljs !== 'undefined') {
+                console.log('highlight.js loaded successfully');
+                hljs.configure({
+                  languages: ['javascript', 'typescript', 'python', 'java', 'csharp', 'html', 'css', 'bash', 'json'],
+                  ignoreUnescapedHTML: true
+                });
+                
+                // Apply highlighting to any existing code blocks
+                document.querySelectorAll('pre code').forEach((block) => {
+                  hljs.highlightElement(block);
+                });
+              } else {
+                console.error('highlight.js failed to load!');
+              }
+            });
             
             // Debug log to verify initialization
             console.log("Webview initialized with chat ID:", window.currentChat.id);
