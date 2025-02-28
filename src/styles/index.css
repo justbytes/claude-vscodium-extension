@@ -1,5 +1,6 @@
 :root {
   --textarea-height: 50px;
+  --main-font: Georgia, "Times New Roman", serif;
 }
 
 body {
@@ -9,13 +10,32 @@ body {
   overflow: hidden;
   justify-content: center;
   align-items: center;
+  font-family: var(--main-font);
+  font-weight: 400;
+  font-size: medium;
+  font-style: normal;
 }
+
+/* Keep the class for specific elements if needed */
+/* .slabo-27px-regular {
+  font-family: var(--main-font);
+  font-weight: 400;
+  font-style: normal;
+} */
 
 #main-container {
   width: 98%;
 }
 
+/* Apply font to all text inputs and textareas */
+input,
+textarea {
+  font-family: var(--main-font);
+}
+
+/* Apply font to all buttons */
 button {
+  font-family: var(--main-font);
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
   border: none;
@@ -25,4 +45,21 @@ button {
 
 button:hover {
   background: var(--vscode-button-hoverBackground);
+}
+
+/* Make sure messages also use the font */
+.message {
+  font-family: var(--main-font);
+}
+
+/* Preserve code blocks with monospace font */
+pre,
+code,
+.code-block code {
+  font-family: var(
+    --vscode-editor-font-family,
+    "Consolas",
+    "Monaco",
+    monospace
+  );
 }

@@ -160,7 +160,7 @@ export class App {
 
       // Enhance system prompt with info about potential context truncation
       let systemPrompt =
-        "You are a helpful AI assistant integrated into VSCodium. Help users with coding tasks, explanations, and general development questions.";
+        "You are a helpful AI assistant integrated into VSCode extenstion. Help users with coding tasks, explanations, and general development questions.";
 
       if (allMessages.length > 2 + RECENT_MESSAGES_COUNT) {
         systemPrompt +=
@@ -276,12 +276,6 @@ export class App {
 
     const success = await this._chatStorage.deleteChat(chatId);
     if (success) {
-      // Check if we deleted the current chat
-      if (this._currentChat.id === chatId) {
-        // Create a new chat if the deleted chat was the current one
-        await this._handleCreateNewChat();
-      }
-
       // Otherwise just notify the webview that the chat was deleted
       this._handleGetAllChats();
     } else {

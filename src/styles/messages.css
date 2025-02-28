@@ -43,9 +43,24 @@
 
 .claude-message {
   background: var(--vscode-editor-inactiveSelectionBackground);
-  max-width: 95%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  line-height: 1.4; /* Slightly tighter line height */
+}
+
+.claude-message br {
+  margin-bottom: 0.5em; /* Reduce space after line breaks */
+  display: block;
+  content: "";
+}
+
+.claude-message br + br {
+  margin-bottom: 0.8em; /* Slightly more space for paragraph breaks (double <br>) */
+}
+
+/* Adjust spacing for paragraphs */
+.claude-message p {
+  margin: 0 0 0.8em 0; /* Reduce bottom margin */
 }
 
 /* Updated code block styles */
@@ -122,6 +137,16 @@
   white-space: pre;
   background-color: var(--vscode-editor-background, #1e1e1e) !important;
   color: var(--vscode-editor-foreground, #d4d4d4) !important;
+}
+
+/* Adjust code block spacing */
+.claude-message .code-block {
+  margin: 0.8em 0; /* Reduce margin around code blocks */
+}
+
+/* Reduce spacing after code blocks */
+.claude-message .code-block + br {
+  display: none;
 }
 
 /* Loading indicator styles */
@@ -284,4 +309,91 @@ pre .hljs {
 
 .language-python .hljs-built_in {
   color: #4ec9b0 !important;
+}
+
+/* UPDATED LIST STYLING TO FIX BULLET POINTS IN NUMBERED LISTS */
+
+/* Clear all list styles first to avoid conflicts */
+.claude-message ol,
+.claude-message ul {
+  margin: 0.7em 0;
+  padding-left: 2em;
+  list-style-position: outside;
+}
+
+/* Set explicit styles for ordered lists */
+.claude-message ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  counter-reset: item;
+}
+
+.claude-message ol li {
+  display: list-item !important;
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-bottom: 0.5em;
+  padding-left: 0.3em;
+  /* Remove any bullet points */
+  position: relative;
+  /* Ensure no ::before is added */
+}
+
+/* Remove any ::before pseudo-elements that might add bullets */
+.claude-message ol > li::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Set explicit styles for unordered lists */
+.claude-message ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+}
+
+.claude-message ul li {
+  display: list-item !important;
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-bottom: 0.5em;
+  padding-left: 0.3em;
+}
+
+/* Handle nested lists properly */
+.claude-message ol ol {
+  list-style-type: lower-alpha !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ol ul {
+  list-style-type: disc !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ul ol {
+  list-style-type: decimal !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ul ul {
+  list-style-type: circle !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+/* Remove any potential bullet markers from text */
+.claude-message li {
+  text-indent: 0;
+}
+
+/* Fix spacing between list items */
+.claude-message li + li {
+  margin-top: 0.3em;
 }
