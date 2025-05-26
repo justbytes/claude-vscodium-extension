@@ -52,6 +52,6 @@ const response = await this._anthropic.messages.create({
         messages: previousMessages,
         system: systemPrompt,
         temperature: 1,
-        thinking: { type: 'enabled', budget_tokens: 2000 },
+        // thinking: { type: 'enabled', budget_tokens: 2000 }, Removed for now
 })
 ```
