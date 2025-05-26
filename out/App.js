@@ -1,8 +1,44 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
-const vscode = require("vscode");
-const sdk_1 = require("@anthropic-ai/sdk");
+const vscode = __importStar(require("vscode"));
+const sdk_1 = __importDefault(require("@anthropic-ai/sdk"));
 const chatLayout_1 = require("./static/chatLayout");
 class App {
     constructor(extensionUri, anthropic, chatStorage, currentChat) {
@@ -192,13 +228,12 @@ You're viewing a code project in VSCode. The user's current context is a Claude 
             }
             // Call Claude API with the optimized context
             const response = await this._anthropic.messages.create({
-                model: 'claude-3-7-sonnet-20250219', // Updated to 3.7 Sonnet
+                model: 'claude-3-7-sonnet-20250219',
                 max_tokens: 4000,
                 messages: previousMessages,
                 system: systemPrompt,
-                temperature: 1, // Add slight variation to responses
-                // Enable extended thinking for more complex coding questions
-                thinking: { type: 'enabled', budget_tokens: 2000 }, // Automatically determine when to use thinking
+                temperature: 1,
+                thinking: { type: 'enabled', budget_tokens: 2000 },
             });
             // Save messages to storage
             await this._chatStorage.addMessageToChat(this._currentChat.id, userMessage);
