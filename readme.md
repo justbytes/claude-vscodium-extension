@@ -34,6 +34,11 @@ AI-powered coding assistant using Anthropic's Claude.
 6. Press `Ctrl+Shift+P` | `CMD+Shift+P` and search "Ask Claude"
 
 
+## VSX Site
+
+https://open-vsx.org/extension/bytes/claude-vscodium
+
+
 ## API Settings
 
 These are the current API options:
