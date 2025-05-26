@@ -6,10 +6,10 @@ class ChatArchive {
         this.storage = storage;
     }
     async getChats() {
-        return this.storage.get("chats", {});
+        return this.storage.get('chats', {});
     }
     async saveChats(chats) {
-        await this.storage.update("chats", chats);
+        await this.storage.update('chats', chats);
     }
     async deleteChat(chatId) {
         const chats = await this.getChats();

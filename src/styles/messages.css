@@ -51,7 +51,7 @@
 .claude-message br {
   margin-bottom: 0.5em; /* Reduce space after line breaks */
   display: block;
-  content: "";
+  content: '';
 }
 
 .claude-message br + br {
@@ -85,12 +85,7 @@
 }
 
 .code-language {
-  font-family: var(
-    --vscode-editor-font-family,
-    "Consolas",
-    "Monaco",
-    monospace
-  );
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
   font-size: 12px;
   color: var(--vscode-descriptionForeground, #cccccc);
   text-transform: uppercase;
@@ -115,24 +110,14 @@
   margin: 0;
   padding: 12px;
   overflow-x: auto;
-  font-family: var(
-    --vscode-editor-font-family,
-    "Consolas",
-    "Monaco",
-    monospace
-  );
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
   font-size: 14px;
   line-height: 1.5;
   background-color: var(--vscode-editor-background, #1e1e1e) !important;
 }
 
 .code-block code {
-  font-family: var(
-    --vscode-editor-font-family,
-    "Consolas",
-    "Monaco",
-    monospace
-  );
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
   tab-size: 4;
   white-space: pre;
   background-color: var(--vscode-editor-background, #1e1e1e) !important;
@@ -396,4 +381,23 @@ pre .hljs {
 /* Fix spacing between list items */
 .claude-message li + li {
   margin-top: 0.3em;
+}
+
+.file-attachment {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+.file-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.file-name {
+  font-family: var(--vscode-editor-font-family);
+  font-size: 14px;
 }

@@ -1,11 +1,15 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 export interface ChatMessage {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  attachments?: Array<{
+    fileName: string;
+    fileType: string;
+    contentRef: string;
+  }>;
 }
-
 export interface Chat {
   id: string;
   messages: ChatMessage[];
@@ -17,11 +21,11 @@ export class ChatArchive {
   constructor(private storage: vscode.Memento) {}
 
   private async getChats(): Promise<{ [key: string]: Chat }> {
-    return this.storage.get("chats", {});
+    return this.storage.get('chats', {});
   }
 
   private async saveChats(chats: { [key: string]: Chat }): Promise<void> {
-    await this.storage.update("chats", chats);
+    await this.storage.update('chats', chats);
   }
 
   async deleteChat(chatId: string): Promise<boolean> {
@@ -55,8 +59,7 @@ export class ChatArchive {
   async getAllChats(): Promise<Chat[]> {
     const chats = await this.getChats();
     return Object.values(chats).sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
