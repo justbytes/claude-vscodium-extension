@@ -25,7 +25,10 @@ export class App {
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'src')],
+        localResourceRoots: [
+          vscode.Uri.joinPath(extensionUri, 'src'),
+          vscode.Uri.joinPath(extensionUri, 'out'),
+        ],
       }
     );
 
@@ -263,7 +266,7 @@ You're viewing a code project in VSCode. The user's current context is a Claude 
         messages: previousMessages,
         system: systemPrompt,
         temperature: 1,
-        thinking: { type: 'enabled', budget_tokens: 2000 },
+        // thinking: { type: 'enabled', budget_tokens: 2000 },
       });
 
       // Save messages to storage

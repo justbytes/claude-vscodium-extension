@@ -1,0 +1,13 @@
+.chat-nav {
+  display: flex;
+  justify-content: end;
+  height: 2vh;
+  width: 96vw;
+  margin: 3px;
+}
+
+.nav-button {
+  width: 2rem;
+  height: 1.25rem;
+  margin: 2px;
+}

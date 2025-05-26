@@ -8,7 +8,7 @@ export const initialWebviewContext = (
   currentChat: Chat
 ): void => {
   // Get paths to resource files
-  const srcPath = vscode.Uri.joinPath(extensionUri, 'src');
+  const srcPath = vscode.Uri.joinPath(extensionUri, 'out');
   const indexStylePath = vscode.Uri.joinPath(srcPath, 'styles', 'index.css');
   const navbarStylePath = vscode.Uri.joinPath(srcPath, 'styles', 'navbar.css');
   const messagesStylePath = vscode.Uri.joinPath(srcPath, 'styles', 'messages.css');

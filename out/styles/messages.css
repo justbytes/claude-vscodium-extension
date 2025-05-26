@@ -1,0 +1,403 @@
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid grey;
+  border-radius: 2px;
+  height: calc(85vh - var(--textarea-height, 50px));
+  width: 100%;
+  transition: height 0.2s ease;
+  overflow: hidden;
+  padding: 5px;
+  margin: 5px;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.chat-item {
+  padding: 8px 12px;
+  margin: 4px 0;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+#messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  line-height: 1.5;
+}
+
+.user-message {
+  background: var(--vscode-editor-selectionBackground);
+}
+
+.claude-message {
+  background: var(--vscode-editor-inactiveSelectionBackground);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4; /* Slightly tighter line height */
+}
+
+.claude-message br {
+  margin-bottom: 0.5em; /* Reduce space after line breaks */
+  display: block;
+  content: '';
+}
+
+.claude-message br + br {
+  margin-bottom: 0.8em; /* Slightly more space for paragraph breaks (double <br>) */
+}
+
+/* Adjust spacing for paragraphs */
+.claude-message p {
+  margin: 0 0 0.8em 0; /* Reduce bottom margin */
+}
+
+/* Updated code block styles */
+.code-block {
+  margin: 10px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--vscode-editor-background, #1e1e1e);
+  border: 1px solid var(--vscode-input-border, #3c3c3c);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+  width: 100%;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: var(--vscode-tab-inactiveBackground, #2d2d2d);
+  border-bottom: 1px solid var(--vscode-input-border, #3c3c3c);
+}
+
+.code-language {
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground, #cccccc);
+  text-transform: uppercase;
+}
+
+.copy-button {
+  background-color: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #ffffff);
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: var(--vscode-button-hoverBackground, #1177bb);
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: var(--vscode-editor-background, #1e1e1e) !important;
+}
+
+.code-block code {
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  tab-size: 4;
+  white-space: pre;
+  background-color: var(--vscode-editor-background, #1e1e1e) !important;
+  color: var(--vscode-editor-foreground, #d4d4d4) !important;
+}
+
+/* Adjust code block spacing */
+.claude-message .code-block {
+  margin: 0.8em 0; /* Reduce margin around code blocks */
+}
+
+/* Reduce spacing after code blocks */
+.claude-message .code-block + br {
+  display: none;
+}
+
+/* Loading indicator styles */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 3px solid var(--vscode-input-border);
+  border-top: 3px solid var(--vscode-button-background);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Force highlight.js styles to be visible */
+pre .hljs {
+  display: block;
+  overflow-x: auto;
+  background-color: var(--vscode-editor-background, #1e1e1e) !important;
+  color: var(--vscode-editor-foreground, #d4d4d4) !important;
+}
+
+/* Enhance syntax highlighting colors */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: #569cd6 !important;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+  color: #ce9178 !important;
+}
+
+.hljs-number,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-meta-string,
+.hljs-deletion {
+  color: #b5cea8 !important;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6a9955 !important;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-function,
+.hljs-subst {
+  color: #dcdcaa !important;
+}
+
+.hljs-class,
+.hljs-symbol,
+.hljs-attr {
+  color: #4ec9b0 !important;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #9cdcfe !important;
+}
+
+/* Force dark VS Code theme highlighting */
+.hljs-selector-tag,
+.hljs-name,
+.hljs-tag {
+  color: #569cd6 !important;
+}
+
+.hljs-attr {
+  color: #9cdcfe !important;
+}
+
+.hljs-string,
+.hljs-selector-attr {
+  color: #ce9178 !important;
+}
+
+/* Make javascript/typescript specific colors stand out */
+.language-javascript .hljs-keyword,
+.language-typescript .hljs-keyword {
+  color: #569cd6 !important;
+}
+
+.language-javascript .hljs-string,
+.language-typescript .hljs-string {
+  color: #ce9178 !important;
+}
+
+.language-javascript .hljs-number,
+.language-typescript .hljs-number {
+  color: #b5cea8 !important;
+}
+
+.language-javascript .hljs-function,
+.language-typescript .hljs-function {
+  color: #dcdcaa !important;
+}
+
+.language-javascript .hljs-params,
+.language-typescript .hljs-params {
+  color: #9cdcfe !important;
+}
+
+/* Python specific colors */
+.language-python .hljs-keyword {
+  color: #569cd6 !important;
+}
+
+.language-python .hljs-string {
+  color: #ce9178 !important;
+}
+
+.language-python .hljs-number {
+  color: #b5cea8 !important;
+}
+
+.language-python .hljs-function,
+.language-python .hljs-decorator {
+  color: #dcdcaa !important;
+}
+
+.language-python .hljs-built_in {
+  color: #4ec9b0 !important;
+}
+
+/* UPDATED LIST STYLING TO FIX BULLET POINTS IN NUMBERED LISTS */
+
+/* Clear all list styles first to avoid conflicts */
+.claude-message ol,
+.claude-message ul {
+  margin: 0.7em 0;
+  padding-left: 2em;
+  list-style-position: outside;
+}
+
+/* Set explicit styles for ordered lists */
+.claude-message ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  counter-reset: item;
+}
+
+.claude-message ol li {
+  display: list-item !important;
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-bottom: 0.5em;
+  padding-left: 0.3em;
+  /* Remove any bullet points */
+  position: relative;
+  /* Ensure no ::before is added */
+}
+
+/* Remove any ::before pseudo-elements that might add bullets */
+.claude-message ol > li::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Set explicit styles for unordered lists */
+.claude-message ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+}
+
+.claude-message ul li {
+  display: list-item !important;
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-bottom: 0.5em;
+  padding-left: 0.3em;
+}
+
+/* Handle nested lists properly */
+.claude-message ol ol {
+  list-style-type: lower-alpha !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ol ul {
+  list-style-type: disc !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ul ol {
+  list-style-type: decimal !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.claude-message ul ul {
+  list-style-type: circle !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+/* Remove any potential bullet markers from text */
+.claude-message li {
+  text-indent: 0;
+}
+
+/* Fix spacing between list items */
+.claude-message li + li {
+  margin-top: 0.3em;
+}
+
+.file-attachment {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+.file-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.file-name {
+  font-family: var(--vscode-editor-font-family);
+  font-size: 14px;
+}

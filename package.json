@@ -2,7 +2,7 @@
   "name": "claude-vscodium",
   "displayName": "Claude AI Assistant for VsCodium",
   "description": "Integrate Claude AI assistant into VSCodium",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "bytes",
   "license": "MIT",
   "repository": {
@@ -56,13 +56,17 @@
     }
   },
   "scripts": {
-    "compile": "tsc -p ./"
+    "compile": "tsc -p ./",
+    "bundle": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+    "copy-files": "cp -r src/styles out/ && cp src/*.js out/ && cp src/*.css out/ 2>/dev/null || true",
+    "build": "npm run bundle && npm run copy-files"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.80.0",
+    "esbuild": "^0.25.4",
     "typescript": "^5.3.3"
   }
 }
