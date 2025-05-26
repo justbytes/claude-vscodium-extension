@@ -3,7 +3,7 @@
   "displayName": "Claude AI Assistant for VsCodium",
   "description": "Integrate Claude AI assistant into VSCodium",
   "version": "0.0.1",
-  "publisher": "YOUR_PUBLISHER_NAME",
+  "publisher": "bytes",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,10 +30,11 @@
   "activationEvents": [
     "onCommand:vscodium-claude.askClaude"
   ],
-  "main": "./out/extension.js",
+  "main": "out/extension.js",
   "files": [
     "src/**/*",
-    "README.md",
+    "out/**/*",
+    "readme.md",
     "LICENSE"
   ],
   "contributes": {
