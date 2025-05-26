@@ -1,8 +1,26 @@
 {
-  "name": "vscodium-claude",
-  "displayName": "Claude AI Assistant",
+  "name": "claude-vscodium",
+  "displayName": "Claude AI Assistant for VsCodium",
   "description": "Integrate Claude AI assistant into VSCodium",
   "version": "0.0.1",
+  "publisher": "YOUR_PUBLISHER_NAME",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justbytes/claude-vscodium-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/justbytes/claude-vscodium-extension/issues"
+  },
+  "homepage": "https://github.com/justbytes/claude-vscodium-extension/vscodium-claude#readme",
+  "keywords": [
+    "ai",
+    "claude",
+    "assistant",
+    "coding",
+    "anthropic",
+    "chatbot"
+  ],
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -14,7 +32,9 @@
   ],
   "main": "./out/extension.js",
   "files": [
-    "src/**/*"
+    "src/**/*",
+    "README.md",
+    "LICENSE"
   ],
   "contributes": {
     "commands": [
@@ -34,14 +54,11 @@
       }
     }
   },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
-    "dotenv": "^16.4.7"
-  },
   "scripts": {
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile"
+    "compile": "tsc -p ./"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.80.0",
