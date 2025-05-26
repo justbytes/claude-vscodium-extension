@@ -1,3 +1,5 @@
+![banner_claudevscodium](/assets/banner_claudevscodium.png)
+
 # VsCodium Claude Extension
 
 AI-powered coding assistant using Anthropic's Claude.
