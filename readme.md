@@ -8,6 +8,8 @@ A powerful VSCode/VSCodium extension that integrates Anthropic's Claude AI direc
 
 *Note: Requires Anthropic API key*
 
+[Watch demo](https://youtu.be/Ymnvga__8i4)
+
 ## ✨ Features
 
 **🔧 AI-Powered Code Assistance**<br>
